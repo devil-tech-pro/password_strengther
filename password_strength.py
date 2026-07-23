@@ -30,6 +30,9 @@ def analyze_password(password):
     suggestions = []
     length = len(password)
 
+    # Initialize counts to 0
+    upper_count = lower_count = digit_count = special_count = 0
+
     # Check length
     if length < 8:
         suggestions.append("Use at least 8 characters.")
