@@ -82,10 +82,11 @@ def analyze_password(password):
     has_digit = bool(re.search(r'[0-9]', password))
     has_special = bool(re.search(r'[^A-Za-z0-9]', password))
 
-    # Additional checks for character diversity
+    # Additional checks for character diversity and complexity
     char_diversity = len(set(password))
     complexity_score = (upper_count + lower_count + digit_count + special_count) / 4
 
+    # Calculate strength based on length, character diversity, and complexity
     if length >= 12 and has_upper and has_lower and has_digit and has_special and char_diversity >= 4 and complexity_score >= 3:
         strength = "Very Strong"
         color = Fore.GREEN
