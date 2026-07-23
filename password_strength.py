@@ -1,5 +1,6 @@
 import re
 import time
+import math
 from colorama import Fore, init
 
 # Initialize colorama for colored output
@@ -38,18 +39,26 @@ def analyze_password(password):
     # Check for uppercase
     if not re.search(r'[A-Z]', password):
         suggestions.append("Add uppercase letters.")
+    else:
+        upper_count = sum(1 for c in password if c.isupper())
 
     # Check for lowercase
     if not re.search(r'[a-z]', password):
         suggestions.append("Add lowercase letters.")
+    else:
+        lower_count = sum(1 for c in password if c.islower())
 
     # Check for digits
     if not re.search(r'[0-9]', password):
         suggestions.append("Add numbers.")
+    else:
+        digit_count = sum(1 for c in password if c.isdigit())
 
     # Check for special characters
     if not re.search(r'[^A-Za-z0-9]', password):
         suggestions.append("Add special characters (e.g., !@#$%).")
+    else:
+        special_count = sum(1 for c in password if not c.isalnum())
 
     # Check for common patterns
     common_patterns = ['123456', 'password', 'qwerty', '111111', 'abc123', 'admin', 'welcome', 'letmein']
@@ -70,16 +79,20 @@ def analyze_password(password):
     has_digit = bool(re.search(r'[0-9]', password))
     has_special = bool(re.search(r'[^A-Za-z0-9]', password))
 
-    if length >= 12 and has_upper and has_lower and has_digit and has_special:
+    # Additional checks for character diversity
+    char_diversity = len(set(password))
+    complexity_score = (upper_count + lower_count + digit_count + special_count) / 4
+
+    if length >= 12 and has_upper and has_lower and has_digit and has_special and char_diversity >= 4 and complexity_score >= 3:
         strength = "Very Strong"
         color = Fore.GREEN
-    elif length >= 10 and (has_upper + has_lower + has_digit + has_special) >= 3:
+    elif length >= 10 and (has_upper + has_lower + has_digit + has_special) >= 3 and char_diversity >= 3 and complexity_score >= 2:
         strength = "Strong"
         color = Fore.CYAN
-    elif length >= 8 and (has_upper + has_lower + has_digit + has_special) >= 2:
+    elif length >= 8 and (has_upper + has_lower + has_digit + has_special) >= 2 and char_diversity >= 2 and complexity_score >= 1:
         strength = "Medium"
         color = Fore.YELLOW
-    elif length >= 6:
+    elif length >= 6 and (has_upper + has_lower + has_digit + has_special) >= 1 and char_diversity >= 1 and complexity_score >= 0.5:
         strength = "Weak"
         color = Fore.RED
     else:
